@@ -11,7 +11,63 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 
-
+f_data_dict = {'ASA': 'American Society of Anesthesiologists',
+                'DMFT': 'Calculation of Decayed, Missing, Filled index for number of teeth',
+                'DMFS': 'Calculation of Decayed, Missing, Filled index for number of teeth',
+                'Teeth': 'Number of teeth present',
+                'Med1': 'CARDIOLOGY category',
+                'Med2': 'NEPHROLOGY category',
+                'Med3': 'NEUROLOGY category',
+                'Med4': 'HEMATOLOGY / ONCOLOGY category',
+                'Med5': 'ENDOCRINOLOGY category',
+                'Med6': 'RHEUMATOLOGY category',
+                'Med7': 'PULMONARY category',
+                'Med8': 'GASTROENTEROLOGY category',
+                'Med9': 'INFECTIOUS DISEASES category',
+                'Med10': 'History of Cancer CATEGORY',
+                'Med11': 'Bisphosponates/Osteoporosis',
+                'TeethLost': 'Number of teeth lost due to Perio disease',
+                'Smoking': 'Current smoking status',
+                'Diabetes': 'Diabetes and HbA1c control',
+                'PlaqueIdx': 'Plaque Index: % of sites with plaque',
+                'BOP': 'Bleeding on Probing: % of sites bleeding',
+                'BoneLoss': 'Any Boneloss',
+                'BL_URQ': 'BoneLoss level in UR Quad',
+                'BL_LRQ': 'BoneLoss level in UR Quad',
+                'BL_ULQ': 'BoneLoss level in UR Quad',
+                'BL_LLQ': 'BoneLoss level in UR Quad',
+                'BL_Vert': 'Any Vertical Boneloss',
+                'BL_MaxPct': 'Maximum boneloss % in any quad',
+                'Calc_URQ': 'Subgingival Calculus Upper Right Quadrant',
+                'Calc_LRQ': 'Subgingival Calculus Lower Right Quadrant',
+                'Calc_ULQ': 'Subgingival Calculus Upper Left Quadrant',
+                'Calc_LLQ': 'Subgingival Calculus Lower Left Quadrant',
+                'RiskScore': 'Perio Risk score (as calculated)',
+                'RiskSel': 'Perio Risk (as selected by provider)',
+                'DxSel': 'Perio Diagnosis (as selected by provider)',
+                'DxCal': 'Perio Diagnosis (as calculated by 2017 algorithm)',
+                'DxCal_BL': "Perio Diagnosis (calc'd by 2017 algorithm); Boneloss is requirement for Periodontitis dx",
+                'Prognosis': 'Perio Prognosis (as selected by provider)',
+                'RFG1': 'General Risk Factor: Inadequate home plaque control',
+                'RFG2': 'General Risk Factor: Inadequate pt compliance',
+                'RFG3': 'General Risk Factor: Smoking habit',
+                'RFG4': 'General Risk Factor: High level of stress',
+                'RFG5': 'General Risk Factor: Bruxism/parafunctional habit',
+                'RFG6': 'General Risk Factor: Diabetes mellitus',
+                'RFG7': 'General Risk Factor: Other systemic medical condition',
+                'RFG8': 'General Risk Factor: Medications affecting periodontium',
+                'RFL1': 'Local Risk Factor: Perio attachment loss',
+                'RFL2': 'Local Risk Factor: Increased probing depths',
+                'RFL3': 'Local Risk Factor: Tooth mobility',
+                'RFL4': 'Local Risk Factor: Furcation involvement',
+                'RFL5': 'Local Risk Factor: High caries activity',
+                'RFL6': 'Local Risk Factor: Defective restorations',
+                'RFL7': 'Local Risk Factor: Removable partial denture(s)',
+                'RFL8': 'Local Risk Factor: Tooth crowding/root proximity/open contacts',
+                'RFL9': 'Local Risk Factor: Abnormal tooth anatomy',
+                'RFL10': 'Local Risk Factor: Radiographic findings',
+                'SRPSxPerio': 'Dental History: Scaling/surgery for perio disease',
+                'OralSx': 'Dental History: Oral surgery'}
 
 
 # Create your views here.
@@ -64,12 +120,14 @@ def main_index(request):
             rf_data = rf_data.loc[rf_data[0]>0].sort_values(by=0, ascending=False)
             rf_cate = list(rf_data.index)[0:10]
             rf_val = list(rf_data.iloc[0:10,0])
-            #rf_val = ['{0:.2E}'.format(i) for i in rf_val]
+            
+            
             #put data together
             f_plot = {'pf_cate':pf_cate, 
                     'pf_val':pf_val, 
                     'rf_cate':rf_cate,
-                    'rf_val':rf_val}
+                    'rf_val':rf_val, 
+                    'f_data_dict':f_data_dict}
             
             see=rf_val
             params = {'result_display_status':'show_result', 

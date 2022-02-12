@@ -187,7 +187,20 @@
           max-width: 800px;
           margin: 1em auto;
       }
-
+      .bulletPlot { 
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        padding-bottom: 3%; /* aspect ratio */
+        vertical-align: top;
+        overflow: hidden;        
+      }
+      .svg-content-responsive {
+        display: inline-block;
+        position: absolute;
+        top: 10px;
+        left: 0;
+      }
       #container {
           height: 400px;
       }
@@ -267,8 +280,24 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-10 offset-1 text-center">
-                <h5 class="mt-5 pt-5"> some intro information goes here </h5>
+              <div class="col-10 offset-1">
+                <p class="pt-5" style="font-size:18px">
+                  The Perio-Risk scoring system provides individualized risk-score based on patient 
+                  characteristics and provides weightage of each risk factor responsible for driving 
+                  the risk of periodontitis. This system is developed using data-driven methods and 
+                  advanced machine learning algorithms. This system also demonstrates the protective 
+                  factors for periodontitis, such as regular teeth brushing habits and flossing. The 
+                  tool automatically utilizes information from the data entry made in the dental 
+                  electronic health record systems. Therefore, clinicians do not have to enter the 
+                  patient information manually in the system. This is the first system that utilized 
+                  hundreds of variables from the dental electronic health records for periodontitis 
+                  prediction. Using this system, clinicians would be able to identify the driving risk 
+                  for periodontitis to take preventive approaches. The risk score, risk factors, and 
+                  protective factors will vary by each patient, providing a personalized risk score. 
+                  This system also automatically provides a diagnosis of periodontal disease using 
+                  the 2017 periodontitis classification developed by the American Academy of Periodontitis 
+                  and the European Federation of Periodontology.
+                </p>
               </div>
             </div>
       
@@ -365,13 +394,18 @@
     d3.json("", function(error, data) {
       //if (error) throw error;
       var data = JSON.parse({{params.bullet_data | safe}})
-      console.log(data);
+      
       var svg = d3.select(".bulletPlot").selectAll("svg")
           .data(data)
         .enter().append("svg")
+           // Responsive SVG needs these 2 attributes and no width and height attr.
+           .attr("preserveAspectRatio", "xMinYMin meet")
+           .attr("viewBox", "0 0 950 50")
+           // Class to make it responsive.
+           .classed("svg-content-responsive", true)        
           .attr("class", "bullet")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
+          //.attr("width", width + margin.left + margin.right)
+          //.attr("height", height + margin.top + margin.bottom)
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
           .call(chart);
@@ -410,6 +444,8 @@
     }
     
     // highcharts risk factors
+    var f_data_dict = {{params.f_plot.f_data_dict | safe}}
+    //console.log(rf_data_dict['ASA']);
     Highcharts.chart('rf_plot', {
         chart: {
             type: 'bar'
@@ -438,7 +474,12 @@
         },
         tooltip: {
            pointFormatter: function ()  {      
-            return this.y.toFixed(4);
+            if ( this.category in f_data_dict ) {
+              return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
+            } else {
+              return this.y.toFixed(4);
+            }
+            
                     }
         },
         plotOptions: {
@@ -503,7 +544,12 @@
         },
         tooltip: {
            pointFormatter: function ()  {      
-            return this.y.toFixed(4);
+            if ( this.category in f_data_dict ) {
+              return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
+            } else {
+              return this.y.toFixed(4);
+            }
+            
                     }
         },
         plotOptions: {
