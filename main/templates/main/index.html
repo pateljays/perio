@@ -346,7 +346,7 @@
                 </div>
                 <!--  detailed risk factors row -->
                 <div class="row">
-                  <div class="col-6 my-3">
+                  <div class="col-sm-6 col-12 my-3">
                     <script src="https://code.highcharts.com/highcharts.js"></script>
                     <script src="https://code.highcharts.com/modules/exporting.js"></script>
                     <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -359,7 +359,7 @@
                     
                     
                   </div>
-                  <div class="col-6 my-3">
+                  <div class="col-sm-6 col-12 my-3">
                     <figure class="highcharts-figure">
                         <div id="pf_plot"></div>
                     </figure>
@@ -383,209 +383,221 @@
     <br><br>
     <script src="{% static 'main/bullet.js' %}";></script>
     <script>
-    var margin = {top: 5, right: 40, bottom: 20, left: 120},
-        width = 960 - margin.left - margin.right,
-        height = 50 - margin.top - margin.bottom;
-
-    var chart = d3.bullet()
-        .width(width)
-        .height(height);
-
-    d3.json("", function(error, data) {
-      //if (error) throw error;
-      var data = JSON.parse({{params.bullet_data | safe}})
-      
-      var svg = d3.select(".bulletPlot").selectAll("svg")
-          .data(data)
-        .enter().append("svg")
-           // Responsive SVG needs these 2 attributes and no width and height attr.
-           .attr("preserveAspectRatio", "xMinYMin meet")
-           .attr("viewBox", "0 0 950 50")
-           // Class to make it responsive.
-           .classed("svg-content-responsive", true)        
-          .attr("class", "bullet")
-          //.attr("width", width + margin.left + margin.right)
-          //.attr("height", height + margin.top + margin.bottom)
-        .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-          .call(chart);
-
-      var title = svg.append("g")
-          .style("text-anchor", "end")
-          .attr("transform", "translate(-6," + height / 2 + ")");
-
-      title.append("text")
-          .attr("class", "title")
-          .text(function(d) { return d.title; });
-
-      title.append("text")
-          .attr("class", "subtitle")
-          .attr("dy", "1em")
-          .text(function(d) { return d.subtitle; });
-
-      d3.selectAll("button").on("click", function() {
-        svg.datum(randomize).call(chart.duration(1000)); // TODO automatic transition
-      });
-    });
-
-    function randomize(d) {
-      if (!d.randomizer) d.randomizer = randomizer(d);
-      d.ranges = d.ranges.map(d.randomizer);
-      d.markers = d.markers.map(d.randomizer);
-      d.measures = d.measures.map(d.randomizer);
-      return d;
-    }
-
-    function randomizer(d) {
-      var k = d3.max(d.ranges) * .2;
-      return function(d) {
-        return Math.max(0, d + k * (Math.random() - .5));
-      };
-    }
-    
-    // highcharts risk factors
-    var f_data_dict = {{params.f_plot.f_data_dict | safe}}
-    //console.log(rf_data_dict['ASA']);
-    Highcharts.chart('rf_plot', {
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Top Risk Factors'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: {{  params.f_plot.rf_cate | safe}},
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Risk Scores',
-                align: 'high'
-            },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        tooltip: {
-           pointFormatter: function ()  {      
-            if ( this.category in f_data_dict ) {
-              return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
-            } else {
-              return this.y.toFixed(4);
-            }
-            
-                    }
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true, 
-                    formatter: function ()  {      
-                      return this.y.toFixed(4);
-                              }
-                    
-                }
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -20,
-            y: 280,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
-            shadow: true
-        },
-        credits: {
-            enabled: false
-        },
-        series: [{
-            name: 'Patient: '+'{{params.p_id}}',
-            data: {{  params.f_plot.rf_val | safe }}, 
-            color: '#fc0044'
-        }], 
-    }); 
-    
-    //highchart protective factors
-    Highcharts.chart('pf_plot', {
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Top Protective Factors'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: {{  params.f_plot.pf_cate | safe}},
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Protective Scores',
-                align: 'high'
-            },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        tooltip: {
-           pointFormatter: function ()  {      
-            if ( this.category in f_data_dict ) {
-              return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
-            } else {
-              return this.y.toFixed(4);
-            }
-            
-                    }
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true, 
-                    formatter: function ()  {      
-                      return this.y.toFixed(4);
-                              }
-                    
-                }
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -20,
-            y: 280,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
-            shadow: true
-        },
-        credits: {
-            enabled: false
-        },
-        series: [{
-            name: 'Patient: '+'{{params.p_id}}',
-            data: {{  params.f_plot.pf_val | safe }}, 
-            color: '#1a72df'
-        }], 
+    //input box autocomplete
+    var location_input=$('input[id="PID"]');
+    location_input.autocomplete({
+      source: "/api/get_pid/",
+      minLength: 1
     });    
-       
     
+    
+    if ('{{params.result_display_status}}' === 'show_result') {
+      console.log('aaaaaa')
+      var margin = {top: 5, right: 40, bottom: 20, left: 120},
+          width = 960 - margin.left - margin.right,
+          height = 50 - margin.top - margin.bottom;
+
+      var chart = d3.bullet()
+          .width(width)
+          .height(height);
+
+      d3.json("", function(error, data) {
+        //if (error) throw error;
+        var data = JSON.parse({{params.bullet_data | safe}})
+      
+        var svg = d3.select(".bulletPlot").selectAll("svg")
+            .data(data)
+          .enter().append("svg")
+             // Responsive SVG needs these 2 attributes and no width and height attr.
+             .attr("preserveAspectRatio", "xMinYMin meet")
+             .attr("viewBox", "0 0 950 50")
+             // Class to make it responsive.
+             .classed("svg-content-responsive", true)        
+            .attr("class", "bullet")
+            //.attr("width", width + margin.left + margin.right)
+            //.attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(chart);
+
+        var title = svg.append("g")
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-6," + height / 2 + ")");
+
+        title.append("text")
+            .attr("class", "title")
+            .text(function(d) { return d.title; });
+
+        title.append("text")
+            .attr("class", "subtitle")
+            .attr("dy", "1em")
+            .text(function(d) { return d.subtitle; });
+
+        d3.selectAll("button").on("click", function() {
+          svg.datum(randomize).call(chart.duration(1000)); // TODO automatic transition
+        });
+      });
+
+      function randomize(d) {
+        if (!d.randomizer) d.randomizer = randomizer(d);
+        d.ranges = d.ranges.map(d.randomizer);
+        d.markers = d.markers.map(d.randomizer);
+        d.measures = d.measures.map(d.randomizer);
+        return d;
+      }
+
+      function randomizer(d) {
+        var k = d3.max(d.ranges) * .2;
+        return function(d) {
+          return Math.max(0, d + k * (Math.random() - .5));
+        };
+      }
+    
+      // highcharts risk factors
+      var f_data_dict = {{params.f_plot.f_data_dict | safe}}
+      //console.log(rf_data_dict['ASA']);
+      Highcharts.chart('rf_plot', {
+          chart: {
+              type: 'bar'
+          },
+          title: {
+              text: 'Top Risk Evidence'
+          },
+          subtitle: {
+              text: ''
+          },
+          xAxis: {
+              categories: {{  params.f_plot.rf_cate | safe}},
+              title: {
+                  text: null
+              }
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Risk Scores',
+                  align: 'high'
+              },
+              labels: {
+                  overflow: 'justify'
+              }
+          },
+          tooltip: {
+             pointFormatter: function ()  {      
+              if ( this.category in f_data_dict ) {
+                return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
+              } else {
+                return this.y.toFixed(4);
+              }
+            
+                      }
+          },
+          plotOptions: {
+              bar: {
+                  dataLabels: {
+                      enabled: true, 
+                      formatter: function ()  {      
+                        return this.y.toFixed(4);
+                                }
+                    
+                  }
+              }
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'right',
+              verticalAlign: 'top',
+              x: -20,
+              y: 280,
+              floating: true,
+              borderWidth: 1,
+              backgroundColor:
+                  Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+              shadow: true
+          },
+          credits: {
+              enabled: false
+          },
+          series: [{
+              name: 'Patient: '+'{{params.p_id}}',
+              data: {{  params.f_plot.rf_val | safe }}, 
+              color: '#fc0044'
+          }], 
+      }); 
+    
+      //highchart protective factors
+      Highcharts.chart('pf_plot', {
+          chart: {
+              type: 'bar'
+          },
+          title: {
+              text: 'Top Protective Evidence'
+          },
+          subtitle: {
+              text: ''
+          },
+          xAxis: {
+              categories: {{  params.f_plot.pf_cate | safe}},
+              title: {
+                  text: null
+              }
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Protective Scores',
+                  align: 'high'
+              },
+              labels: {
+                  overflow: 'justify'
+              }
+          },
+          tooltip: {
+             pointFormatter: function ()  {      
+              if ( this.category in f_data_dict ) {
+                return f_data_dict[this.category]+'<br>'+this.y.toFixed(4);
+              } else {
+                return this.y.toFixed(4);
+              }
+            
+                      }
+          },
+          plotOptions: {
+              bar: {
+                  dataLabels: {
+                      enabled: true, 
+                      formatter: function ()  {      
+                        return this.y.toFixed(4);
+                                }
+                    
+                  }
+              }
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'right',
+              verticalAlign: 'top',
+              x: -20,
+              y: 280,
+              floating: true,
+              borderWidth: 1,
+              backgroundColor:
+                  Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+              shadow: true
+          },
+          credits: {
+              enabled: false
+          },
+          series: [{
+              name: 'Patient: '+'{{params.p_id}}',
+              data: {{  params.f_plot.pf_val | safe }}, 
+              color: '#1a72df'
+          }], 
+      }); 
+    };
+    
+    
+       
     </script>
     
     

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 from main.models import *
 from main.predict_tool.prediction_tool import predict_tool
 from django_pandas.io import read_frame
@@ -74,7 +75,18 @@ f_data_dict = {'ASA': 'American Society of Anesthesiologists',
 
 def main_index(request):
     if request.method == 'GET':
-        params = {'result_display_status':'init'}
+        f_plot = {'pf_cate':[], 
+                'pf_val':[], 
+                'rf_cate':[],
+                'rf_val':[], 
+                'f_data_dict':{}}
+        params = {'result_display_status':'init', 
+                'p_id':'', 
+                'y_pred_norm':'',
+                'y_pred_norm_cate':[],
+                'bullet_data':json.dumps(''),
+                'f_plot':f_plot, 
+                'shap_plot':''}
         return render(request, 'main/index.html', {'params':params})
     elif request.method == 'POST':
         #get user input
@@ -142,6 +154,42 @@ def main_index(request):
         else:
             params = {'result_display_status':'no_result'}
             return render(request, 'main/index.html', {'params':params})
+
+
+###### ajax functions #######
+
+def get_pid(request):
+    try:
+        p_id = int(request.GET.get('term', ''))
+    except:
+        data = 'fail_1'
+        mimetype = 'application/json'
+        return HttpResponse(data, mimetype)
+    
+    p_info = PatientInfo.objects.filter(StudyId__startswith=p_id).values_list('StudyId', flat=True)
+    p_info=list(set(p_info))[:10]
+    p_info.sort()
+    results = []
+    for pid in p_info:
+        p_json = {}
+        p_json['value'] = pid
+        results.append(p_json)
+    if len(results)==0:
+        results=[{'value':'Patient NOT in Database'}]
+    
+    data = json.dumps(results)
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+
+
+
+
+
+
+
+
 
 
 
