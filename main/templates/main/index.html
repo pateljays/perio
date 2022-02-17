@@ -379,7 +379,6 @@
       
     </div>
     
-    
     <br><br>
     <script src="{% static 'main/bullet.js' %}";></script>
     <script>
@@ -392,7 +391,6 @@
     
     
     if ('{{params.result_display_status}}' === 'show_result') {
-      console.log('aaaaaa')
       var margin = {top: 5, right: 40, bottom: 20, left: 120},
           width = 960 - margin.left - margin.right,
           height = 50 - margin.top - margin.bottom;
@@ -455,7 +453,7 @@
     
       // highcharts risk factors
       var f_data_dict = {{params.f_plot.f_data_dict | safe}}
-      //console.log(rf_data_dict['ASA']);
+      var y_label_atta = {{params.f_plot.y_label_atta | safe}}
       Highcharts.chart('rf_plot', {
           chart: {
               type: 'bar'
@@ -470,7 +468,15 @@
               categories: {{  params.f_plot.rf_cate | safe}},
               title: {
                   text: null
+              }, 
+              labels: {
+                  formatter: function () {
+                      console.log(this.value)
+                      return this.value + ' (' + y_label_atta[this.value] + ')'
+                  }                  
+              
               }
+              
           },
           yAxis: {
               min: 0,
@@ -480,6 +486,7 @@
               },
               labels: {
                   overflow: 'justify'
+                  
               }
           },
           tooltip: {
@@ -540,7 +547,15 @@
               categories: {{  params.f_plot.pf_cate | safe}},
               title: {
                   text: null
+              }, 
+              labels: {
+                  formatter: function () {
+                      console.log(this.value)
+                      return this.value + ' (' + y_label_atta[this.value] + ')'
+                  }                  
+              
               }
+              
           },
           yAxis: {
               min: 0,

@@ -80,6 +80,7 @@ def predict_tool(file_dir, p_info):
     model_severe_PD = model.estimators_[2] # separating Severe PD vs others
 
     X_data = data_imputed[CAT_FEATURES + CONT_FEATURES].values
+    
 
     y_pred = model_severe_PD.predict_proba(X_data)[:, 1]
 
@@ -130,5 +131,5 @@ def predict_tool(file_dir, p_info):
 
     #y_pred_df.to_csv(save_dir + '/predicted_risk.csv')
     
-    return shap_df, y_pred_norm, shap_plot
+    return shap_df, y_pred_norm, shap_plot,  data_imputed[CAT_FEATURES + CONT_FEATURES]
    

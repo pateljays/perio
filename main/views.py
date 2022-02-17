@@ -104,7 +104,7 @@ def main_index(request):
             p_rec = read_frame(PatientInfo.objects.filter(StudyId=p_id))
             p_rec = p_rec.fillna(value=np.nan)
             file_dir = os.path.join(settings.BASE_DIR, 'main/predict_tool/')
-            shap_df, y_pred_norm, shap_plot = predict_tool(file_dir, p_rec)
+            shap_df, y_pred_norm, shap_plot, data_imputed = predict_tool(file_dir, p_rec)
             
             #round risk score
             y_pred_norm = round(y_pred_norm[0],2)
@@ -132,16 +132,18 @@ def main_index(request):
             rf_data = rf_data.loc[rf_data[0]>0].sort_values(by=0, ascending=False)
             rf_cate = list(rf_data.index)[0:10]
             rf_val = list(rf_data.iloc[0:10,0])
-            
+            #prepare a y label attachement ==>> label (number)
+            y_label_atta = data_imputed.to_dict('records')[0]
             
             #put data together
             f_plot = {'pf_cate':pf_cate, 
                     'pf_val':pf_val, 
                     'rf_cate':rf_cate,
                     'rf_val':rf_val, 
-                    'f_data_dict':f_data_dict}
+                    'f_data_dict':f_data_dict, 
+                    'y_label_atta':y_label_atta}
             
-            see=rf_val
+            see=y_label_atta
             params = {'result_display_status':'show_result', 
                     'p_id':p_id, 
                     'y_pred_norm':y_pred_norm,
