@@ -347,11 +347,10 @@
                 <!--  detailed risk factors row -->
                 <div class="row">
                   <div class="col-sm-6 col-12 my-3">
-                    <script src="https://code.highcharts.com/highcharts.js"></script>
-                    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-                    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-                    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
+                    <script src="{% static 'highcharts/highcharts.js' %}"></script>
+                    <script src="{% static 'highcharts/modules/accessibility.js' %}"></script>
+                    <script src="{% static 'highcharts/modules/exporting.js' %}"></script>
+                    <script src="{% static 'highcharts/modules/export-data.js' %}"></script>
                     <figure class="highcharts-figure">
                         <div id="rf_plot"></div>
                     </figure>
